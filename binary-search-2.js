@@ -1,4 +1,4 @@
-let testArray = [1, 3, 2, 4, 5, 6, 7];
+let testArray = [100, 20, 30, 100, 150, 200, 300];
 
 class Node {
   constructor(data) {
@@ -152,13 +152,123 @@ class Tree {
     }
     return root;
   }
+
+  levelOrderForEach(root, level, result) {
+    if (root === null || root === undefined) return;
+
+    if (result.length <= level) {
+      result.push([]);
+    }
+
+    result[level].push(root.data);
+
+    this.levelOrderForEach(root.leftChild, level + 1, result);
+    this.levelOrderForEach(root.rightChild, level + 1, result);
+  }
+
+  levelOrder(root) {
+    const result = [];
+
+    this.levelOrderForEach(root, 0, result);
+    return result;
+  }
+
+  inOrderForEach(root) {
+    if (root) {
+      this.inOrderForEach(root.leftChild);
+      console.log(root.data);
+      this.inOrderForEach(root.rightChild);
+    }
+  }
+
+  preOrderForEach(root) {
+    if (root === null || root === undefined) return;
+
+    console.log(root.data + " ");
+    this.preOrderForEach(root.leftChild);
+    this.preOrderForEach(root.rightChild);
+  }
+
+  postOrderForEach(root) {
+    if (root === null || root === undefined) return;
+
+    this.postOrderForEach(root.leftChild);
+    this.postOrderForEach(root.rightChild);
+
+    console.log(root.data);
+  }
+
+  heightUtil(root, value, height) {
+    if (!root) return -1;
+
+    let leftHeight = this.heightUtil(root.leftChild, value, height);
+    let rightHeight = this.heightUtil(root.rightChild, value, height);
+
+    let ans = Math.max(leftHeight, rightHeight) + 1;
+
+    if (root.data === value) height.value = ans;
+
+    return ans;
+  }
+
+  height(root, value) {
+    let height = { x: -1 };
+
+    this.heightUtil(root, value, height);
+    return height.value;
+  }
+
+  depth(root, value) {
+    if (!root) return -1;
+    let dist = -1;
+
+    if (
+      root.data === value ||
+      (dist = this.depth(root.leftChild, value)) >= 0 ||
+      (dist = this.depth(root.rightChild, value)) >= 0
+    ) {
+      return dist + 1;
+    }
+
+    return dist;
+  }
+
+  storeInOrder(root, nodes) {
+    if (root === null) return;
+
+    this.storeInOrder(root.leftChild, nodes);
+    nodes.push(root.data);
+    this.storeInOrder(root.rightChild, nodes);
+  }
+
+  isbalanced(root) {
+    if (root === null) {
+      return true;
+    }
+
+    const leftHeight = this.height(root.leftChild);
+    const rightHeight= this.height(root.rightChild);
+
+    const heightDiff = Math.abs((leftHeight - rightHeight));
+
+    if (heightDiff > 1) {
+      return false;
+    }
+    return this.isbalanced(root.leftChild) && this.isbalanced(root.rightChild);
+  }
+
+  rebalance(root) {
+    let nodes = [];
+
+    this.storeInOrder(root, nodes);
+
+    return this.buildTree(nodes);
+  }
 }
 
 hehe = new Tree();
 
 hehe.root = hehe.buildTree(testArray);
-
-hehe.insert(hehe.root, 10);
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
   if (node === null || node === undefined) {
@@ -173,7 +283,13 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
   }
 };
 
-hehe.find(hehe.root, 11);
+hehe.insert(hehe.root, 10);
+
+console.log(hehe.isbalanced(hehe.root));
 
 // console.log(hehe.root)
 prettyPrint(hehe.root);
+
+// console.log(hehe.levelOrder(hehe.root));
+
+console.log(hehe.depth(hehe.root, 300));
