@@ -97,7 +97,39 @@ class Tree {
     // // }
   }
 
-  deleteItem(value) {}
+  getSuccessor(currentRef) {
+    currentRef = currentRef.rightChild;
+    while (
+      (currentRef !== null && currentRef.leftChild !== null)
+    ) {
+      currentRef = currentRef.leftChild;
+    }
+    return currentRef;
+  }
+
+  deleteItem(root, value) {
+    if (root === null) {
+      return root;
+    }
+
+    if (root.data > value) {
+      root.leftChild = this.deleteItem(root.leftChild, value);
+    } else if (root.data < value) {
+      root.rightChild = this.deleteItem(root.rightChild, value);
+    } else {
+      if (root.leftChild === null) {
+        return root.rightChild;
+      }
+      if (root.rightChild === null) {
+        return root.leftChild;
+      }
+
+      const succ = this.getSuccessor(root);
+      root.data = succ.data;
+      root.rightChild = this.deleteItem(root.rightChild, succ.data);
+    }
+    return root;
+  }
 }
 
 hehe = new Tree();
@@ -107,16 +139,19 @@ hehe.root = hehe.buildTree(testArray);
 hehe.insert(hehe.root, 10);
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
-  if (node === null) {
+  if (node === null || node === undefined) {
     return;
   }
-  if (node.rightChild !== null) {
+  if (node.rightChild !== null || node.rightChild !== undefined) {
     prettyPrint(node.rightChild, `${prefix}${isLeft ? "│   " : "    "}`, false);
   }
   console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.data}`);
-  if (node.leftChild !== null) {
+  if (node.leftChild !== null || node.leftChild !== undefined) {
     prettyPrint(node.leftChild, `${prefix}${isLeft ? "    " : "│   "}`, true);
   }
 };
+
+hehe.deleteItem(hehe.root, 1);
+
 // console.log(hehe.root)
 prettyPrint(hehe.root);
