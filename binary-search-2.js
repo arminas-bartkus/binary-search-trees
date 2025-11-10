@@ -99,9 +99,7 @@ class Tree {
 
   getSuccessor(currentRef) {
     currentRef = currentRef.rightChild;
-    while (
-      (currentRef !== null && currentRef.leftChild !== null)
-    ) {
+    while (currentRef !== null && currentRef.leftChild !== null) {
       currentRef = currentRef.leftChild;
     }
     return currentRef;
@@ -130,6 +128,30 @@ class Tree {
     }
     return root;
   }
+
+  find(root, value) {
+    if (root === null) {
+      console.log("Value not found");
+      return;
+    } else if (root.data === value) {
+      console.log(root);
+      return root;
+    }
+
+    if (root.data > value) {
+      root.leftChild = this.find(root.leftChild, value);
+    } else if (root.data < value) {
+      root.rightChild = this.find(root.rightChild, value);
+    } else {
+      if (root.leftChild === null) {
+        return root.rightChild;
+      }
+      if (root.rightChild === null) {
+        return root.leftChild;
+      }
+    }
+    return root;
+  }
 }
 
 hehe = new Tree();
@@ -151,7 +173,7 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
   }
 };
 
-hehe.deleteItem(hehe.root, 1);
+hehe.find(hehe.root, 11);
 
 // console.log(hehe.root)
 prettyPrint(hehe.root);
